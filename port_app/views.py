@@ -4,6 +4,52 @@ from .models import Image, About, Inter, Experience, Education, Awr_Cer, Skills
 from django.urls import reverse
 from datetime import datetime
 from django.utils.dateparse import parse_date
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate,login,logout
+from django.contrib.auth.decorators import login_required
+
+
+############### Authentication Start #########################
+
+def login_user(request): # dont make the function name login which will conflict with import login.
+    if request.method == 'POST':
+        uname = request.POST.get('uname')
+        pass1 = request.POST.get('pass')
+        user = authenticate(request, username = uname, password  = pass1)
+
+        if user is not None:
+            login(request,user)
+            return redirect('admin')
+        else:
+            return HttpResponse("Wrong password")
+        
+    return render(request,'login.html')
+
+
+
+def logout_user(request):
+    logout(request)
+    return redirect('home')
+
+
+
+def register(request):
+    if request.method == 'POST':
+        uname = request.POST.get('uname')
+        pass1 = request.POST.get('pass1')
+        pass2 = request.POST.get('pass2')
+        if pass1 != pass2:
+            return HttpResponse("Password is not matching with confirm password, please try again")
+        else:
+            my_user = User.objects.create_user(uname,pass1,pass2)
+            my_user.save()
+            
+            return render(request,'login.html')
+            
+    return render(request,'reg.html')
+
+############### Authentication End #########################
+
 
 ############### Read Operatoin Start #########################
 
@@ -33,7 +79,7 @@ def home_page(request):
 
 
 ############### Creat Operatoin Start #########################
-
+@login_required(login_url='login_user')
 def admin(request):
     image_data = Image.objects.last()
     context = {
@@ -42,6 +88,7 @@ def admin(request):
     return render(request, 'admin.html', context)
 
 
+@login_required(login_url='login_user')
 def admin_edit(request):
     image_data = Image.objects.last()
     context = {
@@ -49,6 +96,7 @@ def admin_edit(request):
     }
     return render(request, 'admin_edit.html', context)
 
+@login_required(login_url='login_user')
 def add_image(request):
     if request.method == 'POST':
         image = request.FILES.get('pro_img')
@@ -61,6 +109,8 @@ def add_image(request):
         
     return render(request, 'index.html') 
 
+
+@login_required(login_url='login_user')
 def add_about(request):
     if request.method == 'POST':
         fname = request.POST.get('fname')
@@ -92,6 +142,8 @@ def add_about(request):
     return render(request, 'index.html')
 
 
+
+@login_required(login_url='login_user')
 def add_exp(request):
     if request.method == 'POST':
         job_pos_1 = request.POST.get('job_pos_1')
@@ -165,7 +217,7 @@ def add_exp(request):
     return render(request, 'index.html')
 
 
-
+@login_required(login_url='login_user')
 def add_edu(request):
     if request.method == 'POST':
         edu_inst_1 = request.POST.get('edu_inst_1')
@@ -252,6 +304,8 @@ def add_edu(request):
         return redirect('admin')
     return render(request, 'index.html')
 
+
+@login_required(login_url='login_user')
 def add_skill(request):
     if request.method == 'POST':
         plt_1 = request.FILES.get('plt_1')
@@ -288,7 +342,7 @@ def add_skill(request):
 
 
 
-
+@login_required(login_url='login_user')
 def add_AC(request):
     if request.method == 'POST':
         AC_1 = request.POST.get("AC_1")
@@ -314,6 +368,8 @@ def add_AC(request):
     return render(request, 'index.html')
 
 
+
+@login_required(login_url='login_user')
 def add_inter(request):
     if request.method == 'POST':
         Interests = request.POST.get('Interests')
@@ -334,7 +390,7 @@ def add_inter(request):
 
 ############### Update Operatoin Start #########################
 
-
+@login_required(login_url='login_user')
 def update_image(request):
     try:
         
@@ -355,7 +411,7 @@ def update_image(request):
 
 
 
-
+@login_required(login_url='login_user')
 def update_about(request):
     try:
         
@@ -395,7 +451,7 @@ def update_about(request):
         return HttpResponse('No records found')
     
     
-    
+@login_required(login_url='login_user')    
 def update_experience(request):
     try:
         update_exp = Experience.objects.latest('id') 
@@ -475,7 +531,7 @@ def update_experience(request):
         return HttpResponse('No records found')
     
     
-    
+@login_required(login_url='login_user')   
 def update_education(request):
     try:
         update_education = Education.objects.latest('id') 
@@ -559,6 +615,7 @@ def update_education(request):
         return HttpResponse('No records found')
 
 
+@login_required(login_url='login_user')
 def update_skills(request):
     try:
         update_skills = Skills.objects.latest('id')
@@ -594,6 +651,8 @@ def update_skills(request):
         return HttpResponse('No records found')
 
 
+
+@login_required(login_url='login_user')
 def update_interests(request):
     try:
         update_inter = Inter.objects.latest('id') 
@@ -615,7 +674,7 @@ def update_interests(request):
     
     
     
-    
+@login_required(login_url='login_user')   
 def update_award(request):
     try:
         update_awards = Awr_Cer.objects.latest('id') 
