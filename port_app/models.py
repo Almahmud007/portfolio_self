@@ -17,8 +17,7 @@ class About(models.Model):
     github = models.URLField(null = True)
     twitter = models.URLField(null = True)
     facebook = models.URLField(null = True)
-    
-    
+
     
 class Experience(models.Model):
     job_pos_1 = models.CharField(max_length=255,null = True)

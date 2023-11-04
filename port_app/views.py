@@ -9,6 +9,7 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 
 
+
 ############### Authentication Start #########################
 
 def login_user(request): # dont make the function name login which will conflict with import login.
@@ -22,7 +23,7 @@ def login_user(request): # dont make the function name login which will conflict
             return redirect('admin')
         else:
             return HttpResponse("Wrong password")
-        
+
     return render(request,'login.html')
 
 
@@ -43,12 +44,13 @@ def register(request):
         else:
             my_user = User.objects.create_user(uname,pass1,pass2)
             my_user.save()
-            
+
             return render(request,'login.html')
-            
+
     return render(request,'reg.html')
 
 ############### Authentication End #########################
+
 
 
 ############### Read Operatoin Start #########################
